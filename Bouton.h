@@ -5,6 +5,8 @@
  * Bouton qui memorise l'etat
  * et qui attende de recevoir x bit à 1 pour donner un etat HIGH
  * ou x but à l'etat 0 pour l'état LOW
+ *
+ * Reference : digitalRead, pinMode, HIGH
  */
 #ifndef BOUTON_H
 #define	BOUTON_H
