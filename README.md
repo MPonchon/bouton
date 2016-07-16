@@ -1,2 +1,2 @@
 # bouton
-bouton for Arduino
+debounce bouton for Arduino with memo state 
