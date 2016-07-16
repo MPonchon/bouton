@@ -80,10 +80,10 @@ public:
         int count = 0;
 
         etatbit_e state = ERR;
-        std::cout << "> read() count [" << count << "] state : " << (int) state << "]" << std::endl;
+       // std::cout << "> read() count [" << count << "] state : " << (int) state << "]" << std::endl;
         while (state == ERR && count < bitsSucc) {
             state = readState2();
-            std::cout << "read() count [" << count << "] state : " << (int) state << "]" << std::endl;
+            //std::cout << "read() count [" << count << "] state : " << (int) state << "]" << std::endl;
             count++;
         }
         

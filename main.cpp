@@ -15,8 +15,8 @@ using namespace std;
 #define LOW 0
 #define INPUT 0
 
-
-int DR = HIGH;
+// fake arduino
+int DR = HIGH; // set digitalRead to HIGH
 int digitalRead(int p = 0) { return DR; }
 void pinMode(int, int) { }
 
