@@ -12,11 +12,7 @@
 #define	BOUTON_H
 
 #include <inttypes.h> 
-//#include <iostream>
-
-#define BIT_MEMO 0
-#define BIT_OLDSTATE 1
-#define BIT_STATE 2
+#include <iostream>
 
 typedef uint8_t mask_t; // type du mask
 
@@ -31,7 +27,7 @@ public:
         ERR = 0x0F
     };
 
-private :
+//private :
     // nombre de bits successifs pour la lecture d'un etat
     mask_t mask; // masque associé pour la lecture
     
@@ -88,7 +84,6 @@ public:
      * Lecture avec memorisation des changement d'état
      * retourne l'etat stable 0 ou 1 ou erreur
      * lit un etat fugitif
-     * a placer dans la boucle principale
      */    
     uint8_t update() {
         int count = 0;
@@ -103,19 +98,35 @@ public:
         // bit 2 etat actuel
         // bit 1 ancien etat      
         // lecture mise a jour etat actuel : SS
-        setConfig(state == UN , BIT_STATE); // met a jour le bit state
+        if ( state == UN ) {
+            config  |= ( 1 << 2); // set bit 2  0b00000210
+        }
+        else{
+            config  &= ~(1 << 2 ); // clear bit 2 (3eme))
+        }
         
         // memoire sur front descendant :  0bxxxxx01x
         // compare avec config bit 1 et 2
         // bouton relache : ancien etat 1, nouvel etat 0 => xx01x 
 	if ((config & 0b00000110) == 0b00000010) {
-            setConfig(!(config & (1<<BIT_MEMO)) , BIT_MEMO);  // si Memo up :  clear sinon set
+            if (config & (1<<0) ){ // si Memo up :  clear sinon set
+                config &= ~(1<<0); // clear bit 0 : memorise relachement : M
+            }
+            else {
+                config |= (1<<0);  // set bit 0 : memorise appui : M
+            }
         }
        
         // mise a jour des etats : bits SS
         // change l'etat old (S1) si different de l'actuel
         if ((config & 4 ) != (config & 2) ) {
-            setConfig(config & 4, BIT_OLDSTATE);   // bit state à 1  ? oldstate a 1 : 0;           
+             // bit 3 a 1 ?
+            if (config & 4) {
+               config |= (1 << 1); // set bit 1
+            }
+            else {
+               config &= ~(1 << 1); // clear bit 1
+            }
         }       
         return (uint8_t) state;
     }
@@ -126,7 +137,7 @@ public:
     uint8_t oldState()  { return (config & (1 << 1)) ? 0xFF : 0; } // bit 1
 
     
-private:
+//private:
     /**
      * cree le masque de nbbits
      * exemple pour nbbits = 5 : 
@@ -137,24 +148,10 @@ private:
     mask_t setMask(uint8_t nbbits) {
         mask_t mask = 0;
         mask |= (1 << (++nbbits));
-        //std::cout << " setMask bits [" << (int)nbbits << "] mask [" << (int)mask << "] " << std::endl;
+        std::cout << " setMask bits [" << (int)nbbits << "] mask [" << (int)mask << "] " << std::endl;
         return --mask; // retire 1
         //std::cout << "readState2() mask [" << (int)mask << "] " << std::endl;        
     }
-    
-    /**
-     * change le bit numbit de config à 1 
-     * si la condition cond est true
-     * sinon le met a 0
-     */
-    void setConfig(bool cond, uint8_t numBit) {
-        if (cond) {
-            config  |= ( 1 << numBit); // set bit numBit
-        }
-        else{
-            config  &= ~(1 << numBit ); // clear bit numBit
-       }
-    } 
     
     /**
      * lecture de l'état réel de la pin et comparaison avec le mask

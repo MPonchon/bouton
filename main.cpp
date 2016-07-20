@@ -28,8 +28,10 @@ void pinMode(int, int) { }
  */
 int main(int argc, char** argv) {
 
-    Bouton* b = new Bouton();
+    Bouton* b = new Bouton(Bouton::D0, 2);
     DR = HIGH;
+ 
+    std::cout << "b mask :[" << (int) b->mask << "]" << std::endl;
     /*
     std::cout << "digitalRead[" << (int) digitalRead() << "]" << std::endl;
     Bouton::etatbit_e etat =   b->readState(0b11111);
@@ -69,7 +71,7 @@ int main(int argc, char** argv) {
 
     
     DR = LOW;
-    int read  =   b->read();
+    int read  =   b->update();
     std::cout << "read(3) [" << (int) read << "]" << std::endl;   
     return 0;
 }
